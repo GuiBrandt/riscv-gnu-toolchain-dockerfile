@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim
+FROM debian:bullseye-slim as build
 
 RUN apt-get update && apt-get install -y \
     git autoconf automake autotools-dev curl python3 libmpc-dev libmpfr-dev \
@@ -22,8 +22,8 @@ WORKDIR /build/riscv-gnu-toolchain
 RUN ./configure --prefix=/opt/riscv --with-arch=$(ARCH) --with-abi=$(ABI) --with-multilib-generator="$ARCH-$ABI--"
 RUN make
 
+FROM debian:bullseye-slim
 WORKDIR /
-RUN rm -rf /build
+COPY --from=build /opt/riscv /opt/riscv
 ENV PATH="$PATH:/opt/riscv/bin"
-
 ENTRYPOINT [ "riscv64-unknown-elf-gcc" ]
