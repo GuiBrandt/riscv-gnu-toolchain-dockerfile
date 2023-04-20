@@ -26,4 +26,5 @@ FROM debian:bullseye-slim
 WORKDIR /
 COPY --from=build /opt/riscv /opt/riscv
 ENV PATH="$PATH:/opt/riscv/bin"
+RUN apt-get update && apt-get install -y make libmpc3 && rm -rf /var/lib/apt/lists/*
 ENTRYPOINT [ "riscv64-unknown-elf-gcc" ]
